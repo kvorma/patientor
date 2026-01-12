@@ -1,0 +1,12 @@
+POST http://localhost:3001/api/patients/
+Content-Type: application/json
+
+{
+        "name": "Vode Vorma",
+        "dateOfBirth": "1970-11-30",
+        "ssn": "123456-789a",
+        "gender": "male",
+        "occupation": "0",
+        "entries": []
+    }
+

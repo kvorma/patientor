@@ -1,0 +1,42 @@
+import { Gender, PatientNew } from "./types/types";
+
+const isString = (text: unknown): text is string => {
+  return typeof text === 'string' || text instanceof String;
+};
+
+const validateString = (field: string, data: unknown): string => {
+  if (isString(data) && data.length > 0) {
+    return data;
+  }
+  throw new Error(`Incorrect or missing ${field}`);
+};
+
+const isGender = (data: string): data is Gender => {
+  return Object.values(Gender).map(v => v.toString()).includes(data);
+};
+
+const validateGender = (data: unknown): Gender => {
+  if (isString(data) && isGender(data)) {
+    return data;
+  }
+  throw new Error('Incorrect or missing gender information');
+};
+
+export const validatePatientEntry = (entry: unknown): PatientNew => {
+  if (!entry || typeof entry !== 'object') {
+    throw new Error('Incorrect or missing data');
+  }
+  if ('name' in entry && 'dateOfBirth' in entry && 'ssn' in entry
+    && 'gender' in entry && 'occupation' in entry) {
+    const newPatient: PatientNew = {
+      name: validateString('name', entry.name),
+      dateOfBirth: validateString('birthday', entry.dateOfBirth),
+      ssn: validateString('ssn', entry.ssn),
+      gender: validateGender(entry.gender),
+      occupation: validateString('occupation', entry.occupation)
+    };
+    return newPatient;
+  }
+
+  throw new Error('Incorrect data: some fields are missing');
+};
