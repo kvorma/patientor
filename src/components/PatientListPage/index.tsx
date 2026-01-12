@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody } from '@mui/material';
 import axios from 'axios';
 
-import { PatientFormValues, Patient } from "../../types";
+import { PatientNew, Patient } from "../../types";
 import AddPatientModal from "../AddPatientModal";
 
 import HealthRatingBar from "../HealthRatingBar";
@@ -26,7 +26,7 @@ const PatientListPage = ({ patients, setPatients }: Props) => {
     setError(undefined);
   };
 
-  const submitNewPatient = async (values: PatientFormValues) => {
+  const submitNewPatient = async (values: PatientNew) => {
     try {
       const patient = await patientService.create(values);
       setPatients(patients.concat(patient));
@@ -46,6 +46,23 @@ const PatientListPage = ({ patients, setPatients }: Props) => {
       }
     }
   };
+
+  const patientScore = (p: Patient): number => {
+    if (p.entries === undefined) {
+      return -1;
+    }
+
+    let rating = -1;
+    p.entries.reduce((acc, cv) => {
+      if (cv.type === 'HealthCheck' && cv.date > acc) {
+        rating = cv.healthCheckRating
+        return cv.date
+      } else {
+        return acc;
+      }
+    }, '0000-00-00')
+    return rating
+  }
 
   return (
     <div className="App">
@@ -72,7 +89,7 @@ const PatientListPage = ({ patients, setPatients }: Props) => {
               <TableCell>{patient.gender}</TableCell>
               <TableCell>{patient.occupation}</TableCell>
               <TableCell>
-                <HealthRatingBar showText={false} rating={1} />
+                <HealthRatingBar showText={false} rating={patientScore(patient)} />
               </TableCell>
             </TableRow>
           ))}

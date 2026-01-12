@@ -1,0 +1,43 @@
+import { useState, useEffect } from 'react';
+import { Box, Typography } from '@mui/material';
+import { Entry } from "../../types";
+import DiagnosisServices from '../../services/diagnoses'
+import CareEventCard from './CareEventCard'
+
+interface Props {
+  entries: Entry[];
+}
+
+const ListEntries = ({ entries }: Props) => {
+  const [icdMap, setIcdMap] = useState(new Map())
+
+  useEffect(() => {
+    const fetch = async () => {
+      const icd = await DiagnosisServices.getAll();
+      const hash = new Map(icd.map(e => [e.code, e.name]))
+      setIcdMap(hash)
+    };
+    void fetch();
+  })
+
+  if (entries.length === 0) {
+    return null
+  }
+
+  return (
+    <Box>
+      <Typography align="left" variant="h5">
+        <p>Patient records</p>
+      </Typography>
+      <Typography align="left" variant="h6">
+        {entries.length > 0 && entries.map(e => (
+          <div key={e.id}>
+            <CareEventCard entry={e} icdMap={icdMap} />
+          </div>
+        ))}
+      </Typography>
+    </Box>
+  )
+}
+
+export default ListEntries;

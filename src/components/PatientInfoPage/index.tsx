@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Box, setRef, Typography } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import axios from 'axios';
 import { Patient } from "../../types";
 
 import patientService from "../../services/patients";
-import patients from "../../services/patients";
 
-interface Props {
-}
+import ListEntries from "./ListEntries";
+
+//interface Props {}
 
 const PatientInfoPage = () => {
   const id = useParams().id || 'none'
@@ -37,7 +37,10 @@ const PatientInfoPage = () => {
     void fetch()
   }, [])
 
+  const openModal = () => {
+    console.log('*click*')
 
+  }
 
   if (!id || !patient) {
     return (<h2>{errorMsg}</h2>)
@@ -46,21 +49,28 @@ const PatientInfoPage = () => {
   return (
     <div className="App">
       <Box>
-        <Typography align="left" variant="h4">
-          <p>
-            {patient.name}<>&nbsp;</>
+        <Typography align="left" variant="h5">
+          <p><strong><em>{patient.name}</em><>&nbsp;</>
             {patient.gender === 'male'
               ? (<>&#9794;</>)
               : patient.gender === 'female'
                 ? (<>&#9792;</>)
                 : (<>&#9893;</>)
             }
-          </p>
-        </Typography>
-        <Typography align="left" variant="h6">
-          {patient?.ssn || 1 && (<>SSN: {patient.ssn}</>)}
+          </strong></p>
+          SSN: {patient?.ssn && (<>{patient.ssn}</>)}
           <div>Occupation: {patient.occupation}</div>
         </Typography>
+        {patient.entries ? (
+          <ListEntries entries={patient.entries} />
+        ) : (
+          <>No patient records to show</>
+        )}
+        <p>
+          <Button variant="contained" onClick={() => openModal()}>
+            Add New Record
+          </Button>
+        </p>
       </Box>
     </div>
   );

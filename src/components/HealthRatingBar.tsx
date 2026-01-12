@@ -25,6 +25,7 @@ const HEALTHBAR_TEXTS = [
 ];
 
 const HealthRatingBar = ({ rating, showText }: BarProps) => {
+  if (rating < 0) return null
   return (
     <div className="health-bar">
       <StyledRating

@@ -70,3 +70,4 @@ export const ZPatient = z.object({
 export type Patient = z.infer<typeof ZPatient>;
 export type PatientPub = Omit<Patient, 'ssn'>;
 export type PatientNew = Omit<Patient, 'entries' | 'id'>;
+export type Entry = z.infer<typeof ZEntry>
