@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody } from '@mui/material';
 import axios from 'axios';
 
-import { PatientNew, Patient } from "../../types";
+import { PatientNew, Patient, Type } from "../../types";
 import AddPatientModal from "../AddPatientModal";
-
 import HealthRatingBar from "../HealthRatingBar";
 
 import patientService from "../../services/patients";
+import { myError } from "../../utils";
 
 interface Props {
   patients: Patient[]
@@ -33,16 +33,7 @@ const PatientListPage = ({ patients, setPatients }: Props) => {
       setModalOpen(false);
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
-        if (e?.response?.data && typeof e?.response?.data === "string") {
-          const message = e.response.data.replace('Something went wrong. Error: ', '');
-          console.error(message);
-          setError(message);
-        } else {
-          setError("Unrecognized axios error");
-        }
-      } else {
-        console.error("Unknown error", e);
-        setError("Unknown error");
+        setError(myError(e));
       }
     }
   };
@@ -54,7 +45,8 @@ const PatientListPage = ({ patients, setPatients }: Props) => {
 
     let rating = -1;
     p.entries.reduce((acc, cv) => {
-      if (cv.type === 'HealthCheck' && cv.date > acc) {
+      console.log("cvtype:", cv.type)
+      if (cv.type === Type.HealthCheck && cv.date > acc) {
         rating = cv.healthCheckRating
         return cv.date
       } else {

@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "commonjs",
   "scripts": {
+    "types": "ts-node-dev backend/src/types/types.ts",
     "backend": "ts-node-dev backend/src/index.ts",
     "dev": "vite",
     "build": "tsc && vite build",

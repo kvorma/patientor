@@ -1,16 +1,22 @@
 // zod types
 import * as z from "zod";
 
-export enum HealthCheckRating {
-  "Healthy" = 0,
-  "LowRisk" = 1,
-  "HighRisk" = 2,
-  "CriticalRisk" = 3
+export enum Rating {
+  Healthy = 0,
+  LowRisk = 1,
+  HighRisk = 2,
+  CriticalRisk = 3
 }
 export enum Gender {
   Male = 'male',
   Female = 'female',
   Other = 'other'
+}
+
+export enum Type {
+  Hospital = 'Hospital',
+  OccupationalHealthcare = 'OccupationalHealthcare',
+  HealthCheck = 'HealthCheck'
 }
 
 const ZDiagnosis = z.object({
@@ -22,23 +28,24 @@ const ZDiagnosis = z.object({
 export type Diagnosis = z.infer<typeof ZDiagnosis>
 
 const ZBaseEntry = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   description: z.string(),
   date: z.iso.date(),
   specialist: z.string(),
-  diagnosisCodes: z.array(ZDiagnosis.transform(val => val.code)).optional()
+  diagnosisCodes: z.array(z.string()).optional()
+  //  diagnosisCodes: z.array(ZDiagnosis.transform(val => val.code)).optional()
 })
 
 const ZHospitalEntry = ZBaseEntry.safeExtend({
-  type: z.literal('Hospital'),
+  type: z.literal(Type.Hospital),
   discharge: z.object({
     date: z.iso.date(),
     criteria: z.string()
-  })
+  }).optional()
 })
 
 const ZOccupationalHealthcareEntry = ZBaseEntry.safeExtend({
-  type: z.literal('OccupationalHealthcare'),
+  type: z.literal(Type.OccupationalHealthcare),
   employerName: z.string(),
   sickLeave: z.object({
     startDate: z.iso.date(),
@@ -47,11 +54,11 @@ const ZOccupationalHealthcareEntry = ZBaseEntry.safeExtend({
 })
 
 const ZHealthCheckEntry = ZBaseEntry.safeExtend({
-  type: z.literal('HealthCheck'),
-  healthCheckRating: z.enum(HealthCheckRating)
+  type: z.literal(Type.HealthCheck),
+  healthCheckRating: z.enum(Rating)
 })
 
-const ZEntry = z.union([
+export const ZEntry = z.discriminatedUnion("type", [
   ZHospitalEntry,
   ZOccupationalHealthcareEntry,
   ZHealthCheckEntry

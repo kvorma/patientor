@@ -7,7 +7,7 @@ import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import WorkIcon from '@mui/icons-material/Work';
 import HealthRatingBar from "../HealthRatingBar";
 
-import { Entry } from "../../types";
+import { Entry, Type } from "../../types";
 
 interface FullProps {
   entry: Entry;
@@ -20,7 +20,7 @@ interface EProps {
 
 const EventEntry = ({ entry }: EProps) => {
   switch (entry.type) {
-    case 'Hospital': return (
+    case Type.Hospital: return (
       <Typography align="left" variant="h5">
         <>
           {entry.date}&nbsp;
@@ -31,7 +31,7 @@ const EventEntry = ({ entry }: EProps) => {
         </>
       </Typography>
     )
-    case 'OccupationalHealthcare': return (
+    case Type.OccupationalHealthcare: return (
       <Typography align="left" variant="h5">
         {entry.date}&nbsp;
         <WorkIcon />&nbsp;{entry.employerName}
@@ -40,7 +40,7 @@ const EventEntry = ({ entry }: EProps) => {
         )}
       </Typography>
     )
-    case 'HealthCheck': return (
+    case Type.HealthCheck: return (
       <Typography align="left" variant="h5">
         {entry.date}&nbsp;
         <MedicalServicesIcon />

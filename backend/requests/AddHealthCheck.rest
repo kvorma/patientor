@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/patients/d27736ec-f723-11e9-8f0b-362b9e155667/entry
+Content-Type: application/json
+
+{
+  "description": "testing",
+  "date": "2026-01-13",
+  "specialist": "Dr Pepper",
+  "type": "HealthCheck",
+  "diagnosisCodes": ["X99.äh", "Y99.ky"],
+  "healthCheckRating": 2
+}

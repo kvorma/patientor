@@ -1,46 +1,53 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Typography, Button } from '@mui/material';
-import axios from 'axios';
-import { Patient } from "../../types";
+
+import { Patient, Entry, Type } from "../../types";
 
 import patientService from "../../services/patients";
 
 import ListEntries from "./ListEntries";
+import AddEntryModal from "../AddEntryModal";
+import { myError } from "../../utils";
 
 //interface Props {}
 
 const PatientInfoPage = () => {
   const id = useParams().id || 'none'
   const [patient, setPatient] = useState<Patient>()
-  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string>('')
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [modalError, setModalError] = useState<string>();
 
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setModalError(undefined);
+  };
+
+  const submitNewEntry = async (values: Entry) => {
+    try {
+      void await patientService.addEntry(id, values)
+      setPatient(patient)
+      setModalOpen(false)
+    } catch (e: unknown) {
+      setModalError(myError(e))
+    }
+  }
 
   useEffect(() => {
     const fetch = async () => {
       try {
         const p = await patientService.getById(id);
         setPatient(p);
-      } catch (error) {
-        console.log(error)
-        if (axios.isAxiosError(error)) {
-          if (error.status === 404) {
-            setErrorMsg(error.message + ': ' + error.response?.data)
-          } else {
-            setErrorMsg(error.message)
-          }
-        } else {
-          setErrorMsg('internal error')
-        }
+      } catch (e) {
+        setErrorMsg(myError(e))
       }
     }
     void fetch()
-  }, [])
+  }, [patient])
 
-  const openModal = () => {
-    console.log('*click*')
-
-  }
 
   if (!id || !patient) {
     return (<h2>{errorMsg}</h2>)
@@ -67,6 +74,12 @@ const PatientInfoPage = () => {
           <>No patient records to show</>
         )}
         <p>
+          <AddEntryModal
+            modalOpen={modalOpen}
+            onSubmit={submitNewEntry}
+            error={modalError}
+            onClose={closeModal}
+          />
           <Button variant="contained" onClick={() => openModal()}>
             Add New Record
           </Button>
