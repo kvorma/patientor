@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Typography, Button } from '@mui/material';
 
-import { Patient, Entry, Type } from "../../types";
+import { Patient, Entry } from "../../types";
 
 import patientService from "../../services/patients";
 
@@ -29,7 +29,8 @@ const PatientInfoPage = () => {
   const submitNewEntry = async (values: Entry) => {
     try {
       void await patientService.addEntry(id, values)
-      setPatient(patient)
+      const p = await patientService.getById(id);
+      setPatient(p)
       setModalOpen(false)
     } catch (e: unknown) {
       setModalError(myError(e))
@@ -38,6 +39,7 @@ const PatientInfoPage = () => {
 
   useEffect(() => {
     const fetch = async () => {
+      console.log('getbyid()')
       try {
         const p = await patientService.getById(id);
         setPatient(p);
@@ -46,13 +48,13 @@ const PatientInfoPage = () => {
       }
     }
     void fetch()
-  }, [patient])
+  }, [])
 
 
   if (!id || !patient) {
     return (<h2>{errorMsg}</h2>)
   }
-
+  console.log('PatientInfoPage().refresh')
   return (
     <div className="App">
       <Box>
@@ -67,8 +69,13 @@ const PatientInfoPage = () => {
           </strong></p>
           SSN: {patient?.ssn && (<>{patient.ssn}</>)}
           <div>Occupation: {patient.occupation}</div>
+          <p>Patient records&nbsp;
+            <Button style={{ marginLeft: 10 }} variant="contained" onClick={() => openModal()}>
+              Add New Record
+            </Button>
+          </p>
         </Typography>
-        {patient.entries ? (
+        {patient.entries && patient.entries.length > 0 ? (
           <ListEntries entries={patient.entries} />
         ) : (
           <>No patient records to show</>
@@ -80,9 +87,6 @@ const PatientInfoPage = () => {
             error={modalError}
             onClose={closeModal}
           />
-          <Button variant="contained" onClick={() => openModal()}>
-            Add New Record
-          </Button>
         </p>
       </Box>
     </div>

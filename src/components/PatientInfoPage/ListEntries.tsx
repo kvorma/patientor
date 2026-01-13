@@ -18,7 +18,7 @@ const ListEntries = ({ entries }: Props) => {
       setIcdMap(hash)
     };
     void fetch();
-  })
+  }, [])
 
   if (entries.length === 0) {
     return null
@@ -26,9 +26,6 @@ const ListEntries = ({ entries }: Props) => {
 
   return (
     <Box>
-      <Typography align="left" variant="h5">
-        <p>Patient records</p>
-      </Typography>
       <Typography align="left" variant="h6">
         {entries.length > 0 && entries.map(e => (
           <div key={e.id}>
