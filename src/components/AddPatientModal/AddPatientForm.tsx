@@ -1,8 +1,11 @@
 import { useState, SyntheticEvent } from "react";
 
-import { TextField, InputLabel, MenuItem, Select, Grid, Button, SelectChangeEvent } from '@mui/material';
-
+import { InputLabel, MenuItem, Select, Grid, Button, SelectChangeEvent } from '@mui/material';
+import { Dayjs } from 'dayjs';
+import { dayjs2iso } from "../../utils";
 import { PatientNew, Gender } from "../../types";
+
+import { MyDatePicker, MyTextField } from "../Utils";
 
 interface Props {
   onCancel: () => void;
@@ -22,7 +25,7 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
   const [name, setName] = useState('');
   const [occupation, setOccupation] = useState('');
   const [ssn, setSsn] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState<Dayjs | null>(null);
   const [gender, setGender] = useState(Gender.Other);
 
   const onGenderChange = (event: SelectChangeEvent<string>) => {
@@ -42,7 +45,7 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
       name,
       occupation,
       ssn,
-      dateOfBirth,
+      dateOfBirth: dayjs2iso(dateOfBirth),
       gender
     });
   };
@@ -50,35 +53,14 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
   return (
     <div>
       <form onSubmit={addPatient}>
-        <TextField
-          label="Name"
-          fullWidth
-          value={name}
-          onChange={({ target }) => setName(target.value)}
-        />
-        <TextField
-          label="Social security number"
-          fullWidth
-          value={ssn}
-          onChange={({ target }) => setSsn(target.value)}
-        />
-        <TextField
-          label="Date of birth"
-          placeholder="YYYY-MM-DD"
-          fullWidth
-          value={dateOfBirth}
-          onChange={({ target }) => setDateOfBirth(target.value)}
-        />
-        <TextField
-          label="Occupation"
-          fullWidth
-          value={occupation}
-          onChange={({ target }) => setOccupation(target.value)}
-        />
-
+        <MyTextField id="name" lb="Name" ph="" val={name} set={setName} />
+        <MyTextField id="ssn" lb="Social security number" ph="123456-789A" val={ssn} set={setSsn} />
+        <MyDatePicker lb="Date of birth" val={dateOfBirth} set={setDateOfBirth} />
+        <MyTextField id="occupation" lb="Occupation" ph="" val={occupation} set={setOccupation} />
         <InputLabel style={{ marginTop: 20 }}>Gender</InputLabel>
         <Select
           label="Gender"
+          id='gender'
           fullWidth
           value={gender}
           onChange={onGenderChange}
@@ -94,7 +76,7 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
         </Select>
 
         <Grid>
-          <Grid item>
+          <Grid>
             <Button
               color="secondary"
               variant="contained"
@@ -105,7 +87,7 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
               Cancel
             </Button>
           </Grid>
-          <Grid item>
+          <Grid>
             <Button
               style={{
                 float: "right",

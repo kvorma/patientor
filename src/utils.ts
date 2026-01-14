@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Dayjs } from 'dayjs';
 
 export function hasOwnProperty<X extends {}, Y extends PropertyKey>
   (obj: X, prop: Y): obj is X & Record<Y, unknown> {
@@ -26,4 +27,11 @@ export const myError = (err: unknown): string => {
   }
   console.error('myerror(): ', msg)
   return msg
+}
+
+export const dayjs2iso = (date: Dayjs | null): string => {
+  if (!date) {
+    throw new Error('internal error - null date object')
+  }
+  return date?.format('YYYY-MM-DD')
 }

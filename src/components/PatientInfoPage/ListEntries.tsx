@@ -1,25 +1,26 @@
-import { useState, useEffect } from 'react';
+//import { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Entry } from "../../types";
-import DiagnosisServices from '../../services/diagnoses'
+//import DiagnosisServices from '../../services/diagnoses'
 import CareEventCard from './CareEventCard'
 
 interface Props {
   entries: Entry[];
+  icdMap: Map<string, string>;
 }
 
-const ListEntries = ({ entries }: Props) => {
-  const [icdMap, setIcdMap] = useState(new Map())
-
-  useEffect(() => {
-    const fetch = async () => {
-      const icd = await DiagnosisServices.getAll();
-      const hash = new Map(icd.map(e => [e.code, e.name]))
-      setIcdMap(hash)
-    };
-    void fetch();
-  }, [])
-
+const ListEntries = ({ entries, icdMap }: Props) => {
+  /*  const [icdMap, setIcdMap] = useState(new Map())
+  
+    useEffect(() => {
+      const fetch = async () => {
+        const icd = await DiagnosisServices.getAll();
+        const hash = new Map(icd.map(e => [e.code, e.name]))
+        setIcdMap(hash)
+      };
+      void fetch();
+    }, [])
+  */
   if (entries.length === 0) {
     return null
   }

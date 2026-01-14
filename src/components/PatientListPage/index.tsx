@@ -45,7 +45,6 @@ const PatientListPage = ({ patients, setPatients }: Props) => {
 
     let rating = -1;
     p.entries.reduce((acc, cv) => {
-      console.log("cvtype:", cv.type)
       if (cv.type === Type.HealthCheck && cv.date > acc) {
         rating = cv.healthCheckRating
         return cv.date

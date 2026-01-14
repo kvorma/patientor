@@ -8,15 +8,16 @@ interface Props {
   onClose: () => void;
   onSubmit: (values: Entry) => void;
   error?: string;
+  icdMap: Map<string, string>
 }
 
-const AddEntryModal = ({ modalOpen, onClose, onSubmit, error }: Props) => (
+const AddEntryModal = ({ modalOpen, onClose, onSubmit, error, icdMap }: Props) => (
   <Dialog fullWidth={true} open={modalOpen} onClose={() => onClose()}>
     <DialogTitle>Add a new patient record</DialogTitle>
     <Divider />
     <DialogContent>
       {error && <Alert severity="error">{error}</Alert>}
-      <AddEntryForm onSubmit={onSubmit} onCancel={onClose} />
+      <AddEntryForm onSubmit={onSubmit} onCancel={onClose} icdMap={icdMap} />
     </DialogContent>
   </Dialog>
 );

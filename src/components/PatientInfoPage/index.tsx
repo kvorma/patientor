@@ -5,6 +5,7 @@ import { Box, Typography, Button } from '@mui/material';
 import { Patient, Entry } from "../../types";
 
 import patientService from "../../services/patients";
+import DiagnosisServices from '../../services/diagnoses'
 
 import ListEntries from "./ListEntries";
 import AddEntryModal from "../AddEntryModal";
@@ -18,6 +19,7 @@ const PatientInfoPage = () => {
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [modalError, setModalError] = useState<string>();
+  const [icdMap, setIcdMap] = useState(new Map())
 
   const openModal = (): void => setModalOpen(true);
 
@@ -39,10 +41,12 @@ const PatientInfoPage = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      console.log('getbyid()')
       try {
         const p = await patientService.getById(id);
         setPatient(p);
+        const icd = await DiagnosisServices.getAll();
+        const hash = new Map(icd.map(e => [e.code, e.name]))
+        setIcdMap(hash)
       } catch (e) {
         setErrorMsg(myError(e))
       }
@@ -54,7 +58,7 @@ const PatientInfoPage = () => {
   if (!id || !patient) {
     return (<h2>{errorMsg}</h2>)
   }
-  console.log('PatientInfoPage().refresh')
+
   return (
     <div className="App">
       <Box>
@@ -76,7 +80,7 @@ const PatientInfoPage = () => {
           </p>
         </Typography>
         {patient.entries && patient.entries.length > 0 ? (
-          <ListEntries entries={patient.entries} />
+          <ListEntries entries={patient.entries} icdMap={icdMap} />
         ) : (
           <>No patient records to show</>
         )}
@@ -86,6 +90,7 @@ const PatientInfoPage = () => {
             onSubmit={submitNewEntry}
             error={modalError}
             onClose={closeModal}
+            icdMap={icdMap}
           />
         </p>
       </Box>
