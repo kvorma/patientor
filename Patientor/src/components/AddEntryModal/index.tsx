@@ -1,0 +1,25 @@
+import { Dialog, DialogTitle, DialogContent, Divider, Alert } from '@mui/material';
+
+import AddEntryForm from "./AddEntryForm";
+import { type Entry } from "../../types";
+
+interface Props {
+  modalOpen: boolean;
+  onClose: () => void;
+  onSubmit: (values: Entry) => void;
+  error?: string;
+  icdMap: Map<string, string>
+}
+
+const AddEntryModal = ({ modalOpen, onClose, onSubmit, error, icdMap }: Props) => (
+  <Dialog fullWidth={true} open={modalOpen} onClose={() => onClose()}>
+    <DialogTitle>Add a new patient record</DialogTitle>
+    <Divider />
+    <DialogContent>
+      {error && <Alert severity="error">{error}</Alert>}
+      <AddEntryForm onSubmit={onSubmit} onCancel={onClose} icdMap={icdMap} />
+    </DialogContent>
+  </Dialog>
+);
+
+export default AddEntryModal;

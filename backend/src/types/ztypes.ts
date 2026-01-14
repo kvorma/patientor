@@ -7,6 +7,7 @@ export enum Rating {
   HighRisk = 2,
   CriticalRisk = 3
 }
+
 export enum Gender {
   Male = 'male',
   Female = 'female',
@@ -18,14 +19,14 @@ export enum Type {
   OccupationalHealthcare = 'OccupationalHealthcare',
   HealthCheck = 'HealthCheck'
 }
-
+// eslint-disable-next-line
 const ZDiagnosis = z.object({
   code: z.string(),
   name: z.string(),
   latin: z.string().optional()
-})
+});
 
-export type Diagnosis = z.infer<typeof ZDiagnosis>
+export type Diagnosis = z.infer<typeof ZDiagnosis>;
 
 const ZBaseEntry = z.object({
   id: z.string().optional(),
@@ -34,7 +35,7 @@ const ZBaseEntry = z.object({
   specialist: z.string(),
   diagnosisCodes: z.array(z.string()).optional()
   //  diagnosisCodes: z.array(ZDiagnosis.transform(val => val.code)).optional()
-})
+});
 
 const ZHospitalEntry = ZBaseEntry.safeExtend({
   type: z.literal(Type.Hospital),
@@ -42,7 +43,7 @@ const ZHospitalEntry = ZBaseEntry.safeExtend({
     date: z.iso.date(),
     criteria: z.string()
   }).optional()
-})
+});
 
 const ZOccupationalHealthcareEntry = ZBaseEntry.safeExtend({
   type: z.literal(Type.OccupationalHealthcare),
@@ -51,18 +52,18 @@ const ZOccupationalHealthcareEntry = ZBaseEntry.safeExtend({
     startDate: z.iso.date(),
     endDate: z.iso.date()
   }).optional()
-})
+});
 
 const ZHealthCheckEntry = ZBaseEntry.safeExtend({
   type: z.literal(Type.HealthCheck),
   healthCheckRating: z.enum(Rating)
-})
+});
 
 export const ZEntry = z.discriminatedUnion("type", [
   ZHospitalEntry,
   ZOccupationalHealthcareEntry,
   ZHealthCheckEntry
-])
+]);
 
 export const ZPatient = z.object({
   id: z.string().optional(),
@@ -77,4 +78,4 @@ export const ZPatient = z.object({
 export type Patient = z.infer<typeof ZPatient>;
 export type PatientPub = Omit<Patient, 'ssn'>;
 export type PatientNew = Omit<Patient, 'entries' | 'id'>;
-export type Entry = z.infer<typeof ZEntry>
+export type Entry = z.infer<typeof ZEntry>;
